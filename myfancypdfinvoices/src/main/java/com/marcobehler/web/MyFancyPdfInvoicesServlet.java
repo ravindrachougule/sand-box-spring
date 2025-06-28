@@ -1,6 +1,7 @@
 package com.marcobehler.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marcobehler.context.Application;
 import com.marcobehler.model.Invoice;
 import com.marcobehler.service.InvoiceService;
 import jakarta.servlet.ServletException;
@@ -12,7 +13,6 @@ import java.io.IOException;
 import java.util.List;
 
 public class MyFancyPdfInvoicesServlet extends HttpServlet {
-    private InvoiceService invoiceService = new InvoiceService();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -21,7 +21,7 @@ public class MyFancyPdfInvoicesServlet extends HttpServlet {
             String userId = request.getParameter("user_id");
             Integer amount = Integer.valueOf(request.getParameter("amount"));
 
-            Invoice invoice = invoiceService.create(userId, amount);
+            Invoice invoice = Application.invoiceService.create(userId, amount);
             response.setContentType("application/json; charset=UTF-8");
             String json = new ObjectMapper().writeValueAsString(invoice);
             response.getWriter().print(json);
@@ -45,7 +45,7 @@ public class MyFancyPdfInvoicesServlet extends HttpServlet {
             );
         } else if (req.getRequestURI().equalsIgnoreCase("/invoices")) {
             resp.setContentType("application/json; charset=UTF-8");
-            List<Invoice> invoices = invoiceService.findAll();
+            List<Invoice> invoices = Application.invoiceService.findAll();
             String json = new ObjectMapper().writeValueAsString(invoices);
 
             resp.getWriter().print(json);
